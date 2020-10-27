@@ -1,0 +1,101 @@
+<!--
+	Quiz template
+-->
+
+
+
+{% block title %}Quiz{% endblock %}
+
+{% block additional_head_content %}
+{% load static %}
+<style>
+body {
+  background-image: url({% static 'images/background.jpg' %});
+}
+</style> 
+
+<!--
+	JavaScript code to add timer for quiz. Value is set to 30 mins. Can be changed from here.
+-->
+
+<script type="text/javascript">
+window.onload = function begin(){
+document.getElementById('timer').innerHTML =
+  60 + ":" + 00;
+startTimer();
+}
+
+function startTimer() {
+  var presentTime = document.getElementById('timer').innerHTML;
+  var timeArray = presentTime.split(/[:]+/);
+  var m = timeArray[0];
+  var s = checkSecond((timeArray[1] - 1));
+  if(s==59){m=m-1}
+  if(m<0){
+    document.getElementById('quiz').submit();
+  }
+  document.getElementById('timer').innerHTML =
+    m + ":" + s;
+  setTimeout(startTimer, 1000);
+}
+
+function checkSecond(sec) {
+  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+  if (sec < 0) {sec = "59"};
+  return sec;
+}
+</script>
+{% endblock %}
+
+{% block body %}
+<div class='float-right sticky-top'>
+	<div class="row justify-content-left">
+		<div class="col-mx-auto">
+			<div class="alert alert-success" role="alert"><center>Time left : <span id="timer"></span></center></div>
+		</div>
+	</div>
+</div>
+<br>
+<br>
+<form action="quizview" method="POST" id="quiz" class="answer-form" name="answer-form" enctype="multipart/form-data"> {% csrf_token %}
+{% for Questions in content %}
+<div class='container'>
+	<div class="row justify-content-center">
+		<div class="col-mx-auto">
+			<div class="card bg-dark text-white" style="width: 40rem;">
+			  	<div class="card-body">
+			    	<center><h5 class="card-title">Question {{ forloop.counter }}</h5></center></br>
+			    
+					<img src="{{ Questions.img.url }}" class="img-responsive" width="100%"/>
+					
+					<table>
+                        <tr>
+                            <td><input type = "radio"  class = "rb" name = {{Questions.question_id}} id = "option1" value = "c1">  {{Questions.c1}}  </td>
+                        </tr>
+                        <tr>
+                            <td ><input type = "radio" class = "rb" name = {{Questions.question_id}} id = "option1" value = "c2">  {{Questions.c2}} </td>
+                        </tr>
+                        <tr>
+                            <td ><input type = "radio" class = "rb" name = {{Questions.question_id}} id = "option1" value = "c3">  {{Questions.c3}}  </td>
+                        </tr>
+                        <tr>
+                            <td > <input type = "radio" class = "rb" name = {{Questions.question_id}} id = "option1" value = "c4"> {{Questions.c4}}  </td>
+                        </tr>
+                    </table>
+					<br>
+					
+			 	</div>
+			</div>
+		</div>
+	</div>
+</div>
+<br><br>
+{% endfor %}
+<center><input type="submit" value="Submit" class="btn btn-primary"></center>
+</form>
+<br>
+<br>
+{% endblock %}
+
+
+

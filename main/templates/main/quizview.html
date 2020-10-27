@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Quiz</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+
+</head>
+<body>
+    {%  include 'main/navbar.html' %}
+    {%  include 'main/base.html' %}
+	<div class="container-fluid">
+    {% block content %}
+    <div class='float-right sticky-top'>
+        <div class="row justify-content-left">
+            <div class="col-mx-auto">
+                <div class="alert alert-success" role="alert"><center>Time left : <span id="timer"></span></center></div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    {% if content %}
+    
+
+    <form action="quizview" method="POST" id="quiz" class="answer-form" name="answer-form" enctype="multipart/form-data"> {% csrf_token %}
+        {% for Questions in content %}
+        <div class='container'>
+            <div class="row justify-content-center">
+                <div class="col-mx-auto">
+                    <div class="card bg-dark text-white" style="width: 40rem;">
+                          <div class="card-body">
+                            <center><h5 class="card-title">Question {{ forloop.counter }}</h5></center></br>
+                            
+                            <img src="{{ Questions.img.url |default_if_none:'#'}}" class="img-responsive" width="100%"/>
+                          </br>
+                          When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+                            $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+                            
+                            $${{Questions.question_text}}$$
+
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c1" name = {{Questions.question_id}}>
+                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c1}}</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c2" name = {{Questions.question_id}}>
+                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c2}}</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c3" name = {{Questions.question_id}}>
+                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c3}}</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c4" name = {{Questions.question_id}}>
+                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c4}}</label>
+                              </div>
+                            
+                            <br>
+                            
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+                    </br>
+                    <button   type="submit" class="submit btn btn-default"> Submit  <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>
+                </form> 
+    {%else%}
+            </br>
+        <h3 >No Quizes Available now OR You Have Submitted The last Available Exam </h3>
+        
+    {% endif %}
+	{% endblock %}
+    </div>
+	<hr>
+	<h5>Our footer</h5>
+	
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</html>
