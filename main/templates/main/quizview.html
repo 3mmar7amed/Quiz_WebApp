@@ -1,8 +1,11 @@
 {% load static %}
+{%  include 'main/base.html' %}
 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Quiz</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -15,57 +18,138 @@
 </script>
 
 </head>
+
+{% block additional_head_content %}
+{% if content %}
+<!--
+	JavaScript code to add timer for quiz. Value is set to 30 mins. Can be changed from here.
+-->
+<style>
+    .options {
+    position: relative;
+    padding-left: 40px
+}
+
+#options label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 14px;
+    cursor: pointer
+}
+
+.options input {
+    opacity: 0
+}
+
+.checkmark {
+    position: absolute;
+    top: -1px;
+    left: 6px;
+    height: 25px;
+    width: 25px;
+    background-color: #555;
+    border: 1px solid #ddd;
+    border-radius: 50%
+}
+
+/* .options input:checked~.checkmark:after {
+    display: block
+} */
+
+.options .checkmark:after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    display: block;
+    background: white;
+    /* position: absolute; */
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 300ms ease-in-out 0s
+}
+
+.options input[type="radio"]:checked~.checkmark {
+    background: #21bf73;
+    transition: 300ms ease-in-out 0s
+}
+
+.options input[type="radio"]:checked~.checkmark:after {
+    transform: translate(-50%, -50%) scale(1)
+}
+</style>
+    <script type="text/javascript">
+    window.onload = function begin(){
+        document.getElementById('timer').innerHTML =
+        60 + ":" + 00;
+        startTimer();
+    }
+
+    function startTimer() {
+
+        var presentTime = document.getElementById('timer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = checkSecond((timeArray[1] - 1));
+        if(s==59){m=m-1}
+        if(m<0){
+            document.getElementById('quiz').submit();
+        }
+        document.getElementById('timer').innerHTML =
+            m + ":" + s;
+        setTimeout(startTimer, 1000);
+    }
+
+    function checkSecond(sec) {
+        if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+        if (sec < 0) {sec = "59"};
+        return sec;
+    }
+    </script>
+{% endif %}
+{% endblock %}
+
 <body>
-    {%  include 'main/navbar.html' %}
-    {%  include 'main/base.html' %}
-	<div class="container-fluid">
+
     {% block content %}
+    {% if content %}
+	<div class="container-fluid">
+    
+    
     <div class='float-right sticky-top'>
         <div class="row justify-content-left">
             <div class="col-mx-auto">
-                <div class="alert alert-success" role="alert"><center>Time left : <span id="timer"></span></center></div>
+                <div class="alert alert-success" role="alert" ><center>Time left : <span id="timer"></span></center></div>
             </div>
         </div>
     </div>
     <br>
     <br>
-    {% if content %}
-    
 
     <form action="quizview" method="POST" id="quiz" class="answer-form" name="answer-form" enctype="multipart/form-data"> {% csrf_token %}
         {% for Questions in content %}
-        <div class='container'>
+        <div class='container'  >
             <div class="row justify-content-center">
-                <div class="col-mx-auto">
-                    <div class="card bg-dark text-white" style="width: 40rem;">
+                <div class="col-mx-auto" style="margin: 50px 40px 40px 40px ; border: 20px 20px 20px 20px ;" >
+                    <div class="card bg-dark text-white" style="width: 20rem;">
                           <div class="card-body">
                             <center><h5 class="card-title">Question {{ forloop.counter }}</h5></center></br>
-                            
-                            <img src="{{ Questions.img.url |default_if_none:'#'}}" class="img-responsive" width="100%"/>
+                            {% if Questions.img %}
+                                <img src="{{ Questions.img.url |default_if_none:'#'}}" class="img-responsive" width="100%"/>
+                            {%endif%}
                           </br>
-                          When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-                            $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+                          {%if Questions.question_text %}
+                            <div class="py-2 h5"><b>$${{Questions.question_text}}$$</b></div>
+                            {%endif%}
                             
-                            $${{Questions.question_text}}$$
-
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c1" name = {{Questions.question_id}}>
-                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c1}}</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c2" name = {{Questions.question_id}}>
-                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c2}}</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c3" name = {{Questions.question_id}}>
-                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c3}}</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="c4" name = {{Questions.question_id}}>
-                                <label class="form-check-label" for="inlineCheckbox1">{{Questions.c4}}</label>
-                              </div>
-                            
+                                    <label class="options" >$${{Questions.c1}}$$  <input type="radio" name={{Questions.question_id}} id = "option1" value = "c1"> <span class="checkmark"></span> </label> 
+                                    <br>
+                                    <label class="options">$${{Questions.c2}}$$  <input type="radio" name={{Questions.question_id}} id = "option1" value = "c2"> <span class="checkmark"></span> </label> 
+                                    <br>
+                                    <label class="options">$${{Questions.c3}}$$  <input type="radio" name={{Questions.question_id}} id = "option1" value = "c3"> <span class="checkmark"></span> </label>
+                                    <br>
+                                    <label class="options">$${{Questions.c4}}$$ <input type="radio" name={{Questions.question_id}} id = "option1" value = "c4"> <span class="checkmark"></span> </label>                            
                             <br>
                             
                          </div>
@@ -77,16 +161,13 @@
                     </br>
                     <button   type="submit" class="submit btn btn-default"> Submit  <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>
-                </form> 
-    {%else%}
-            </br>
-        <h3 >No Quizes Available now OR You Have Submitted The last Available Exam </h3>
-        
+    </form> 
+
     {% endif %}
+    
 	{% endblock %}
     </div>
 	<hr>
-	<h5>Our footer</h5>
 	
 </body>
 

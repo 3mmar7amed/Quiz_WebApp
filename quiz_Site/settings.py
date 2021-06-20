@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,8 +27,19 @@ SECRET_KEY = '8h9s2qzm9bv5%r-2z-_d*w68cn9i%hmo4__&vhcfvpfp(apqu4'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+LOCALE_PATHS = (
+   os.path.join(BASE_DIR, 'locale'),
+)
 
+LANGUAGES = (
+    ('ar', _('Arabic')),
+    ('en', _('English')),
+)
 
+MULTILINGUAL_LANGUAGES = (
+    "en-us",
+    "ar-ae",
+)
 # Application definition
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
